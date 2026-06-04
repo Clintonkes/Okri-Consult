@@ -38,7 +38,11 @@ def startup_event():
         db = SessionLocal()
         try:
             admin = get_admin_by_email(db, settings.ADMIN_EMAIL)
-            if admin is None and settings.ADMIN_EMAIL and settings.ADMIN_PASSWORD:
+            has_real_credentials = settings.ADMIN_EMAIL and settings.ADMIN_PASSWORD and settings.ADMIN_PASSWORD not in {
+                "change-this-password",
+                "change-this-password-securely",
+            }
+            if admin is None and has_real_credentials:
                 create_admin(db, settings.ADMIN_EMAIL, settings.ADMIN_PASSWORD, is_superuser=True)
                 logger.info("Seeded admin account for %s", settings.ADMIN_EMAIL)
         finally:

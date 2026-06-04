@@ -1,8 +1,13 @@
 export const API_URL = import.meta.env.VITE_API_URL || '/api/v1'
 
 export const api = {
-  get: async (endpoint) => {
-    const res = await fetch(`${API_URL}${endpoint}`, { headers: { 'Content-Type': 'application/json' } })
+  get: async (endpoint, token) => {
+    const res = await fetch(`${API_URL}${endpoint}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      }
+    })
     if (!res.ok) throw await res.json()
     return await res.json()
   },

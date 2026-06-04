@@ -56,6 +56,10 @@ Backend `.env`:
 SECRET_KEY=your-secret-key
 ADMIN_EMAIL=okriconsult@proton.me
 ADMIN_PASSWORD=your-secure-password
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxx
+RESEND_FROM_EMAIL=Okri Consult <no-reply@yourdomain.com>
+RESEND_FROM_NAME=Okri Consult LLC
+PUBLIC_SITE_URL=https://yourdomain.com
 ```
 
 ## Admin Bootstrap
@@ -67,6 +71,16 @@ python3 scripts/bootstrap_admin.py
 ```
 
 The script will prompt for the admin email and password, hash the password, and store it in the configured database.
+
+## Email Delivery
+
+Resend needs:
+
+1. A valid `RESEND_API_KEY`
+2. A verified sending domain
+3. A `RESEND_FROM_EMAIL` that uses that verified domain
+
+Once your domain is verified, you can send from any address at that domain.
 
 ## Colors
 - Primary: Deep blue (#1d4ed8)

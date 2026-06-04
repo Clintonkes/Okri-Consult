@@ -14,6 +14,18 @@ def create_booking(db: Session, booking: BookingCreate):
 def get_bookings(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Booking).order_by(Booking.created_at.desc()).offset(skip).limit(limit).all()
 
+def get_bookings_paginated(db: Session, page: int = 1, limit: int = 10):
+    total = db.query(Booking).count()
+    offset = max(page - 1, 0) * limit
+    items = db.query(Booking).order_by(Booking.created_at.desc()).offset(offset).limit(limit).all()
+    return {
+        "items": items,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": max((total + limit - 1) // limit, 1) if total else 1,
+    }
+
 def get_booking(db: Session, booking_id: int):
     return db.query(Booking).filter(Booking.id == booking_id).first()
 
@@ -42,6 +54,18 @@ def create_quote_request(db: Session, quote: QuoteRequestCreate):
 def get_quote_requests(db: Session, skip: int = 0, limit: int = 100):
     return db.query(QuoteRequest).order_by(QuoteRequest.created_at.desc()).offset(skip).limit(limit).all()
 
+def get_quote_requests_paginated(db: Session, page: int = 1, limit: int = 10):
+    total = db.query(QuoteRequest).count()
+    offset = max(page - 1, 0) * limit
+    items = db.query(QuoteRequest).order_by(QuoteRequest.created_at.desc()).offset(offset).limit(limit).all()
+    return {
+        "items": items,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": max((total + limit - 1) // limit, 1) if total else 1,
+    }
+
 def create_testimonial(db: Session, testimonial: TestimonialCreate):
     db_testimonial = Testimonial(**testimonial.model_dump())
     db.add(db_testimonial)
@@ -54,6 +78,21 @@ def get_testimonials(db: Session, published_only: bool = True, skip: int = 0, li
     if published_only:
         query = query.filter(Testimonial.is_published == True)
     return query.order_by(Testimonial.created_at.desc()).offset(skip).limit(limit).all()
+
+def get_testimonials_paginated(db: Session, published_only: bool = True, page: int = 1, limit: int = 10):
+    query = db.query(Testimonial)
+    if published_only:
+        query = query.filter(Testimonial.is_published == True)
+    total = query.count()
+    offset = max(page - 1, 0) * limit
+    items = query.order_by(Testimonial.created_at.desc()).offset(offset).limit(limit).all()
+    return {
+        "items": items,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": max((total + limit - 1) // limit, 1) if total else 1,
+    }
 
 def get_testimonial(db: Session, testimonial_id: int):
     return db.query(Testimonial).filter(Testimonial.id == testimonial_id).first()
@@ -115,6 +154,21 @@ def create_contact_message(db: Session, message: ContactMessageCreate):
 
 def get_contact_messages(db: Session, skip: int = 0, limit: int = 100):
     return db.query(ContactMessage).order_by(ContactMessage.created_at.desc()).offset(skip).limit(limit).all()
+
+def get_contact_messages_paginated(db: Session, page: int = 1, limit: int = 10):
+    total = db.query(ContactMessage).count()
+    offset = max(page - 1, 0) * limit
+    items = db.query(ContactMessage).order_by(ContactMessage.created_at.desc()).offset(offset).limit(limit).all()
+    return {
+        "items": items,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": max((total + limit - 1) // limit, 1) if total else 1,
+    }
+
+def get_contact_message(db: Session, message_id: int):
+    return db.query(ContactMessage).filter(ContactMessage.id == message_id).first()
 
 def update_message_responded(db: Session, message_id: int, is_responded: bool):
     db_message = db.query(ContactMessage).filter(ContactMessage.id == message_id).first()

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from database import get_db
 from security import get_admin_user, create_access_token
-from crud.crud import create_testimonial, get_testimonials, get_testimonial, update_testimonial_publish, delete_testimonial
+from crud.crud import create_testimonial, get_testimonials_paginated, get_testimonial, update_testimonial_publish, delete_testimonial
 from schemas.schemas import TestimonialCreate, TestimonialResponse
 from typing import List
 
@@ -12,9 +12,9 @@ router = APIRouter()
 def create_new_testimonial(testimonial: TestimonialCreate, db: Session = Depends(get_db), admin: dict = Depends(get_admin_user)):
     return create_testimonial(db, testimonial)
 
-@router.get("", response_model=List[TestimonialResponse])
-def list_testimonials(skip: int = 0, limit: int = 100, published_only: bool = True, db: Session = Depends(get_db)):
-    return get_testimonials(db, published_only, skip, limit)
+@router.get("")
+def list_testimonials(page: int = 1, limit: int = 10, published_only: bool = True, db: Session = Depends(get_db), admin: dict = Depends(get_admin_user)):
+    return get_testimonials_paginated(db, published_only, page, limit)
 
 @router.patch("/{testimonial_id}/publish")
 def toggle_publish(testimonial_id: int, is_published: bool, db: Session = Depends(get_db), admin: dict = Depends(get_admin_user)):
