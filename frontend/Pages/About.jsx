@@ -24,7 +24,7 @@ export default function About() {
               </p>
             </div>
             <div className="relative">
-              <div className="aspect-w-4 aspect-h-3 rounded-3xl overflow-hidden shadow-xl">
+              <div className="aspect-[4/3] rounded-3xl overflow-hidden shadow-xl">
                 <img 
                   src="https://images.unsplash.com/photo-1600880706871-5e3b218bab05?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
                   alt="Cleaning Team" 

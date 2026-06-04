@@ -36,7 +36,7 @@ export default function Hero() {
             </div>
           </div>
           <div className="relative">
-            <div className="aspect-w-16 aspect-h-12 rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-blue-100 to-teal-100">
+            <div className="aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-blue-100 to-teal-100">
               <img 
                 src="https://images.unsplash.com/photo-1581578017442-73e757bfcf4d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
                 alt="Professional Cleaner" 
