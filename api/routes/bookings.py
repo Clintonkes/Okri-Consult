@@ -8,11 +8,11 @@ from typing import List
 
 router = APIRouter()
 
-@router.post("/", response_model=BookingResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=BookingResponse, status_code=status.HTTP_201_CREATED)
 def create_new_booking(booking: BookingCreate, db: Session = Depends(get_db)):
     return create_booking(db, booking)
 
-@router.get("/", response_model=List[BookingResponse])
+@router.get("", response_model=List[BookingResponse])
 def list_bookings(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), admin = Depends(get_admin_user)):
     return get_bookings(db, skip, limit)
 

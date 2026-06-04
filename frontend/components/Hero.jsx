@@ -14,7 +14,6 @@ export default function Hero() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
               <a href="/booking" className="btn-primary text-center">Book Now</a>
-              <a href="/contact" className="btn-secondary text-center">Get a Free Estimate</a>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="flex items-center space-x-2">

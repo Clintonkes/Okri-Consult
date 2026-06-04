@@ -10,6 +10,7 @@ import FAQ from './Pages/FAQ'
 import Contact from './Pages/Contact'
 import AdminLogin from './Pages/AdminLogin'
 import AdminDashboard from './Pages/AdminDashboard'
+import { Navigate } from 'react-router-dom'
 import './index.css'
 
 function App() {
@@ -24,7 +25,8 @@ function App() {
         <Route path="/testimonials" element={<Testimonials />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin/login" element={<Navigate to="/admin" replace />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>

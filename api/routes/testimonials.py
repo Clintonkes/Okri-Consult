@@ -8,22 +8,22 @@ from typing import List
 
 router = APIRouter()
 
-@router.post("/testimonials", response_model=TestimonialResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=TestimonialResponse, status_code=status.HTTP_201_CREATED)
 def create_new_testimonial(testimonial: TestimonialCreate, db: Session = Depends(get_db), admin: dict = Depends(get_admin_user)):
     return create_testimonial(db, testimonial)
 
-@router.get("/testimonials", response_model=List[TestimonialResponse])
+@router.get("", response_model=List[TestimonialResponse])
 def list_testimonials(skip: int = 0, limit: int = 100, published_only: bool = True, db: Session = Depends(get_db)):
     return get_testimonials(db, published_only, skip, limit)
 
-@router.patch("/testimonials/{testimonial_id}/publish")
+@router.patch("/{testimonial_id}/publish")
 def toggle_publish(testimonial_id: int, is_published: bool, db: Session = Depends(get_db), admin: dict = Depends(get_admin_user)):
     db_testimonial = update_testimonial_publish(db, testimonial_id, is_published)
     if db_testimonial is None:
         raise HTTPException(status_code=404, detail="Testimonial not found")
     return db_testimonial
 
-@router.delete("/testimonials/{testimonial_id}")
+@router.delete("/{testimonial_id}")
 def delete_testimonial_endpoint(testimonial_id: int, db: Session = Depends(get_db), admin: dict = Depends(get_admin_user)):
     db_testimonial = delete_testimonial(db, testimonial_id)
     if db_testimonial is None:

@@ -27,7 +27,6 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
               <Link to="/booking" className="btn-primary">Book Now</Link>
-              <Link to="/booking" className="btn-secondary">Get a Free Estimate</Link>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
               <div className="text-center">

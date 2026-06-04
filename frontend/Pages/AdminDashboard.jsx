@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
 import toast from 'react-hot-toast'
@@ -15,7 +16,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (!token) {
-      navigate('/admin/login')
+      navigate('/admin')
       return
     }
     fetchData()
@@ -40,7 +41,7 @@ export default function AdminDashboard() {
     } catch (error) {
       if (error.message?.includes('401')) {
         localStorage.removeItem('token')
-        navigate('/admin/login')
+        navigate('/admin')
       }
     }
     setLoading(false)
@@ -59,7 +60,7 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem('token')
-    navigate('/admin/login')
+    navigate('/admin')
     toast.success('Logged out successfully')
   }
 
@@ -161,6 +162,9 @@ export default function AdminDashboard() {
       <div className="flex">
         <aside className="w-64 bg-white shadow-md min-h-screen">
           <div className="p-6">
+            <Link to="/" className="inline-flex items-center text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors mb-6">
+              ← Home
+            </Link>
             <h2 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-teal-500 bg-clip-text text-transparent mb-8">
               Okri Admin
             </h2>

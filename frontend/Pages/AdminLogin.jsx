@@ -26,6 +26,12 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-teal-50 flex items-center justify-center">
       <div className="card p-12 w-full max-w-md">
         <div className="text-center mb-8">
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <Link to="/" className="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors">
+              Home
+            </Link>
+            <span className="text-xs uppercase tracking-[0.2em] text-gray-500">Admin Login</span>
+          </div>
           <Link to="/" className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-teal-500 bg-clip-text text-transparent">
             Okri Admin
           </Link>

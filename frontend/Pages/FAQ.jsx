@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
@@ -43,7 +44,7 @@ export default function FAQ() {
           </div>
           <div className="text-center mt-12">
             <p className="text-gray-600 mb-4">Still have questions?</p>
-            <a href="/contact" className="btn-secondary">Contact Us</a>
+            <Link to="/contact" className="btn-secondary">Contact Us</Link>
           </div>
         </div>
       </section>
