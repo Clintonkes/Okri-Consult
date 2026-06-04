@@ -1,5 +1,8 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import logging
 from config import settings
 from database import Base, engine
@@ -7,6 +10,7 @@ from api.routes import bookings, quotes, testimonials, services, contact, auth
 
 app = FastAPI(title=settings.PROJECT_NAME)
 logger = logging.getLogger(__name__)
+frontend_dist = Path(__file__).resolve().parent / "frontend" / "dist"
 
 app.add_middleware(
     CORSMiddleware,
@@ -38,3 +42,9 @@ def root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+
+if frontend_dist.exists():
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
+else:
+    logger.warning("Frontend build output not found at %s", frontend_dist)
