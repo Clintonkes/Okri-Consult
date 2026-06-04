@@ -31,7 +31,7 @@ export default function FAQ() {
                   className="w-full p-6 text-left flex justify-between items-center"
                 >
                   <span className="font-bold text-gray-900">{faq.question}</span>
-                  <span className={`text-blue-600 text-xl transition-transform ${openIndex === index ? 'rotate-45' : ''}`}>+</span>
+                  <span className={`text-teal-600 text-xl transition-transform ${openIndex === index ? 'rotate-45' : ''}`}>+</span>
                 </button>
                 {openIndex === index && (
                   <div className="px-6 pb-6">

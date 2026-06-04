@@ -28,7 +28,7 @@ export default function Testimonials() {
               <div key={testimonial.id} className="card p-6">
                 <div className="flex mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <span key={i} className={`text-xl ${i < testimonial.rating ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
+                    <span key={i} className={`text-xl ${i < testimonial.rating ? 'text-cyan-500' : 'text-gray-300'}`}>★</span>
                   ))}
                 </div>
                 <p className="text-gray-600 mb-4 italic">"{testimonial.content}"</p>

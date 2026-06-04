@@ -4,36 +4,57 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+:root {
+  --brand-brown: #6f4526;
+  --brand-brown-deep: #52311a;
+  --brand-brown-soft: #ead9c8;
+  --brand-green: #214d3f;
+  --brand-green-deep: #17382d;
+  --brand-cream: #f8f4ee;
+  --brand-charcoal: #201b17;
+}
+
 * {
   font-family: 'Inter', sans-serif;
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: #ffffff;
-  color: #333;
+  background:
+    radial-gradient(circle at top left, rgba(111, 69, 38, 0.08), transparent 30%),
+    radial-gradient(circle at top right, rgba(33, 77, 63, 0.08), transparent 26%),
+    linear-gradient(180deg, #fffdf9 0%, #f7f2ea 100%);
+  color: var(--brand-charcoal);
+}
+
+::selection {
+  background: rgba(111, 69, 38, 0.18);
+  color: var(--brand-charcoal);
 }
 
 .btn-primary {
   @apply bg-gradient-to-r from-blue-700 to-blue-800 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105;
+  box-shadow: 0 12px 30px -18px rgba(111, 69, 38, 0.85);
 }
 
 .btn-secondary {
   @apply bg-gradient-to-r from-cyan-500 to-teal-500 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105;
+  box-shadow: 0 12px 30px -18px rgba(33, 77, 63, 0.8);
 }
 
 .btn-accent {
   @apply bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105;
+  box-shadow: 0 12px 30px -18px rgba(67, 88, 69, 0.85);
 }
 
 .card {
-  @apply bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300;
+  @apply bg-white/85 backdrop-blur rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100;
 }
 
 .card-hover {
-  @apply transform transition-all duration-300 hover:-translate-y-1;
+  @apply transform transition-all duration-300 hover:-translate-y-1 hover:border-gray-200;
 }
 
 .input-field {
-  @apply w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200;
+  @apply w-full px-4 py-3 rounded-lg border border-gray-200 bg-white/90 text-gray-900 placeholder:text-gray-400 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 outline-none transition-all duration-200;
 }

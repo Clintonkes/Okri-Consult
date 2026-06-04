@@ -77,7 +77,7 @@ export default function AdminDashboard() {
                     <h3 className="font-bold text-gray-900">{booking.full_name}</h3>
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                       booking.status === 'completed' ? 'bg-green-100 text-green-700' :
-                      booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                      booking.status === 'pending' ? 'bg-cyan-100 text-teal-700' :
                       'bg-gray-100 text-gray-700'
                     }`}>
                       {booking.status}
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
                   <h3 className="font-bold text-gray-900">{msg.subject}</h3>
                   <p className="text-gray-600 text-sm">{msg.name} - {msg.email}</p>
                   <p className="text-gray-600 mt-2">{msg.message}</p>
-                  <span className={`inline-block mt-2 px-2 py-1 rounded text-xs ${msg.is_responded ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                  <span className={`inline-block mt-2 px-2 py-1 rounded text-xs ${msg.is_responded ? 'bg-green-100 text-green-700' : 'bg-cyan-100 text-teal-700'}`}>
                     {msg.is_responded ? 'Responded' : 'Pending'}
                   </span>
                 </div>
