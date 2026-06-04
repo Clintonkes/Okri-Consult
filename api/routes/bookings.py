@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from core.database import get_db
-from core.security import get_admin_user
+from database import get_db
+from security import get_admin_user
 from crud.crud import create_booking, get_bookings, get_booking, update_booking_status, delete_booking
 from schemas.schemas import BookingCreate, BookingResponse
 from typing import List

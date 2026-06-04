@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from core.database import get_db
-from core.security import get_admin_user
+from database import get_db
+from security import get_admin_user
 from crud.crud import create_contact_message, get_contact_messages, update_message_responded
 from schemas.schemas import ContactMessageCreate, ContactMessageResponse
 from typing import List

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from core.database import get_db
-from core.security import get_admin_user, create_access_token
+from database import get_db
+from security import get_admin_user, create_access_token
 from crud.crud import create_testimonial, get_testimonials, get_testimonial, update_testimonial_publish, delete_testimonial
 from schemas.schemas import TestimonialCreate, TestimonialResponse
 from typing import List

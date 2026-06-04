@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from core.database import get_db
-from core.security import get_admin_user
+from database import get_db
+from security import get_admin_user
 from crud.crud import create_service, get_services, get_service, update_service, delete_service
 from schemas.schemas import ServiceCreate, ServiceResponse
 from typing import List
