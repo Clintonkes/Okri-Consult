@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from models.models import Booking, QuoteRequest, Testimonial, Service, ContactMessage, Admin, SiteSetting
 from schemas.schemas import BookingCreate, QuoteRequestCreate, TestimonialCreate, ServiceCreate, ContactMessageCreate, AdminLogin
-from core.database import hash_password
+from database import hash_password
 from datetime import datetime
 
 def create_booking(db: Session, booking: BookingCreate):
@@ -139,7 +139,6 @@ def authenticate_admin(db: Session, email: str, password: str):
     admin = get_admin_by_email(db, email)
     if not admin:
         return None
-    from core.database import verify_password
     if verify_password(password, admin.password):
         return admin
     return None

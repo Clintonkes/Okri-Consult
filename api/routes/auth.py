@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from core.database import get_db
-from core.security import get_admin_user, create_access_token
+from database import get_db
+from security import get_admin_user, create_access_token
 from schemas.schemas import AdminLogin, Token
 from crud.crud import authenticate_admin as verify_admin
-from core.config import settings
+from config import settings
 
 router = APIRouter()
 
