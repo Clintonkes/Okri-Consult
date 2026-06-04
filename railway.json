@@ -3,11 +3,11 @@
     {
       "name": "backend",
       "source": {
-        "path": "backend"
+        "path": "."
       },
       "dockerfile": {
-        "path": "backend/Dockerfile",
-        "dockerfile": "backend/Dockerfile"
+        "path": "Dockerfile",
+        "dockerfile": "Dockerfile"
       },
       "env": {
         "SECRET_KEY": "${{secrets.SECRET_KEY}}",

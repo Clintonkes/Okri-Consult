@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from models.models import Booking, QuoteRequest, Testimonial, Service, ContactMessage, Admin, SiteSetting
 from schemas.schemas import BookingCreate, QuoteRequestCreate, TestimonialCreate, ServiceCreate, ContactMessageCreate, AdminLogin
-from database import hash_password
+from database import hash_password, verify_password
 from datetime import datetime
 
 def create_booking(db: Session, booking: BookingCreate):

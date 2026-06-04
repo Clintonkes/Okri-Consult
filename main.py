@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import logging
 from config import settings
 from database import Base, engine
 from api.routes import bookings, quotes, testimonials, services, contact, auth
 
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI(title=settings.PROJECT_NAME)
+logger = logging.getLogger(__name__)
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,6 +22,14 @@ app.include_router(quotes.router, prefix=f"{settings.API_V1_STR}/quotes", tags=[
 app.include_router(testimonials.router, prefix=f"{settings.API_V1_STR}/testimonials", tags=["testimonials"])
 app.include_router(services.router, prefix=f"{settings.API_V1_STR}/services", tags=["services"])
 app.include_router(contact.router, prefix=f"{settings.API_V1_STR}/contact", tags=["contact"])
+
+
+@app.on_event("startup")
+def startup_event():
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception:
+        logger.exception("Database initialization failed during startup")
 
 @app.get("/")
 def root():
