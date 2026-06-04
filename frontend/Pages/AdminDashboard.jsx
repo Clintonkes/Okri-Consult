@@ -35,6 +35,10 @@ function readBadge(isRead) {
   return isRead ? 'bg-green-100 text-green-700' : 'bg-cyan-100 text-teal-700'
 }
 
+function isFinalBookingStatus(status) {
+  return ['approved', 'completed', 'denied'].includes(String(status || '').toLowerCase())
+}
+
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -42,31 +46,28 @@ export default function AdminDashboard() {
   const [authChecked, setAuthChecked] = useState(false)
   const [bookingsPage, setBookingsPage] = useState(1)
   const [messagesPage, setMessagesPage] = useState(1)
-  const [testimonialsPage, setTestimonialsPage] = useState(1)
   const [bookingData, setBookingData] = useState(initialPageState)
   const [messageData, setMessageData] = useState(initialPageState)
-  const [testimonialData, setTestimonialData] = useState(initialPageState)
-  const [counts, setCounts] = useState({ bookings: 0, messages: 0, testimonials: 0 })
+  const [counts, setCounts] = useState({ bookings: 0, messages: 0 })
   const [modalState, setModalState] = useState({
     open: false,
     type: null,
     loading: false,
     data: null,
   })
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false)
   const navigate = useNavigate()
 
   const token = localStorage.getItem('token')
 
   const loadDashboardCounts = async () => {
-    const [bookings, messages, testimonials] = await Promise.all([
+    const [bookings, messages] = await Promise.all([
       api.get(`/bookings?page=1&limit=1`, token),
       api.get(`/contact?page=1&limit=1`, token),
-      api.get(`/testimonials?page=1&limit=1&published_only=false`, token),
     ])
     setCounts({
       bookings: bookings.total || 0,
       messages: messages.total || 0,
-      testimonials: testimonials.total || 0,
     })
   }
 
@@ -81,9 +82,6 @@ export default function AdminDashboard() {
       } else if (activeTab === 'messages') {
         const data = await api.get(`/contact?page=${messagesPage}&limit=${PAGE_SIZE}`, token)
         setMessageData(data)
-      } else if (activeTab === 'testimonials') {
-        const data = await api.get(`/testimonials?page=${testimonialsPage}&limit=${PAGE_SIZE}&published_only=false`, token)
-        setTestimonialData(data)
       }
     } catch (error) {
       if (error.message?.includes('401')) {
@@ -108,7 +106,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!authChecked) return
     loadTabData()
-  }, [activeTab, bookingsPage, messagesPage, testimonialsPage, authChecked])
+  }, [activeTab, bookingsPage, messagesPage, authChecked])
 
   const openRecord = async (type, record) => {
     setModalState({ open: true, type, loading: true, data: null })
@@ -135,8 +133,13 @@ export default function AdminDashboard() {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('token')
     setSidebarOpen(false)
+    setLogoutModalOpen(true)
+  }
+
+  const confirmLogout = () => {
+    localStorage.removeItem('token')
+    setLogoutModalOpen(false)
     navigate('/admin')
   }
 
@@ -153,11 +156,6 @@ export default function AdminDashboard() {
     if (activeTab === 'messages') {
       const data = await api.get(`/contact?page=${messagesPage}&limit=${PAGE_SIZE}`, token)
       setMessageData(data)
-      return
-    }
-    if (activeTab === 'testimonials') {
-      const data = await api.get(`/testimonials?page=${testimonialsPage}&limit=${PAGE_SIZE}&published_only=false`, token)
-      setTestimonialData(data)
     }
   }
 
@@ -167,8 +165,13 @@ export default function AdminDashboard() {
       toast.success(`Booking marked as ${status}`)
       await refreshCurrentTab()
       if (modalState.open && modalState.type === 'booking' && modalState.data?.id === bookingId) {
-        const updated = await api.get(`/bookings/${bookingId}`, token)
-        setModalState((current) => ({ ...current, data: updated }))
+        setModalState((current) => ({
+          ...current,
+          data: {
+            ...current.data,
+            status,
+          },
+        }))
       }
     } catch (error) {
       toast.error('Failed to update booking status')
@@ -217,13 +220,28 @@ export default function AdminDashboard() {
         <h3 className="font-bold text-gray-900 mb-2">Contact Messages</h3>
         <p className="text-3xl font-bold text-teal-700">{counts.messages}</p>
       </div>
-      <div className="bg-white rounded-2xl p-6 text-center shadow-sm border border-gray-100">
-        <div className="text-4xl mb-2">⭐</div>
-        <h3 className="font-bold text-gray-900 mb-2">Testimonials</h3>
-        <p className="text-3xl font-bold text-green-700">{counts.testimonials}</p>
-      </div>
     </div>
   )
+
+  const renderBookingActions = (booking) => {
+    if (isFinalBookingStatus(booking.status)) {
+      return null
+    }
+
+    return (
+      <div className="flex flex-wrap justify-end gap-2">
+        <button type="button" onClick={() => updateBookingStatus(booking.id, 'approved')} className="btn-secondary text-xs px-3 py-2">
+          Approve
+        </button>
+        <button type="button" onClick={() => updateBookingStatus(booking.id, 'completed')} className="btn-accent text-xs px-3 py-2">
+          Complete
+        </button>
+        <button type="button" onClick={() => updateBookingStatus(booking.id, 'denied')} className="px-3 py-2 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700">
+          Deny
+        </button>
+      </div>
+    )
+  }
 
   const renderBookings = () => (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -253,19 +271,11 @@ export default function AdminDashboard() {
                 </td>
                 <td className="px-4 py-4 text-sm text-gray-600">{formatDate(booking.created_at)}</td>
                 <td className="px-4 py-4">
-                  <div className="flex justify-end gap-2">
+                  <div className="flex flex-col items-end gap-2 sm:flex-row sm:flex-wrap">
                     <button type="button" onClick={() => openRecord('booking', booking)} className="px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-700">
                       View
                     </button>
-                    <button type="button" onClick={() => updateBookingStatus(booking.id, 'approved')} className="btn-secondary text-xs px-3 py-2">
-                      Approve
-                    </button>
-                    <button type="button" onClick={() => updateBookingStatus(booking.id, 'completed')} className="btn-accent text-xs px-3 py-2">
-                      Complete
-                    </button>
-                    <button type="button" onClick={() => updateBookingStatus(booking.id, 'denied')} className="px-3 py-2 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700">
-                      Deny
-                    </button>
+                    {renderBookingActions(booking)}
                   </div>
                 </td>
               </tr>
@@ -346,69 +356,12 @@ export default function AdminDashboard() {
     </div>
   )
 
-  const renderTestimonials = () => (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="min-w-[760px] w-full text-left">
-          <thead className="bg-gray-50 text-gray-600 text-xs uppercase tracking-wide">
-            <tr>
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Rating</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Created</th>
-              <th className="px-4 py-3 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {testimonialData.items.map((testimonial) => (
-              <tr key={testimonial.id} className="hover:bg-gray-50">
-                <td className="px-4 py-4">
-                  <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                  <div className="text-sm text-gray-500 truncate">{testimonial.content}</div>
-                </td>
-                <td className="px-4 py-4 text-sm text-gray-700">{testimonial.rating}/5</td>
-                <td className="px-4 py-4">
-                  <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${testimonial.is_published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
-                    {testimonial.is_published ? 'Published' : 'Draft'}
-                  </span>
-                </td>
-                <td className="px-4 py-4 text-sm text-gray-600">{formatDate(testimonial.created_at)}</td>
-                <td className="px-4 py-4">
-                  <div className="flex justify-end gap-2">
-                    <button type="button" onClick={() => openRecord('testimonial', testimonial)} className="px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-700">
-                      View
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {testimonialData.items.length === 0 && (
-              <tr>
-                <td colSpan="5" className="px-4 py-10 text-center text-gray-500">
-                  No testimonials found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      <div className="p-4 border-t border-gray-100">
-        <Pagination
-          pageState={testimonialData}
-          onPrev={() => setTestimonialsPage((current) => Math.max(current - 1, 1))}
-          onNext={() => setTestimonialsPage((current) => Math.min(current + 1, testimonialData.total_pages))}
-        />
-      </div>
-    </div>
-  )
-
   const renderContent = useMemo(() => {
     if (activeTab === 'dashboard') return renderDashboard()
     if (activeTab === 'bookings') return renderBookings()
     if (activeTab === 'messages') return renderMessages()
-    if (activeTab === 'testimonials') return renderTestimonials()
     return null
-  }, [activeTab, bookingData, messageData, testimonialData, counts])
+  }, [activeTab, bookingData, messageData, counts])
 
   if (!authChecked) {
     return null
@@ -464,7 +417,6 @@ export default function AdminDashboard() {
                 ['dashboard', 'Dashboard'],
                 ['bookings', 'Bookings'],
                 ['messages', 'Contact Messages'],
-                ['testimonials', 'Testimonials'],
               ].map(([key, label]) => (
                 <button
                   key={key}
@@ -498,7 +450,7 @@ export default function AdminDashboard() {
           <div className="hidden md:flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 capitalize">{activeTab.replace('-', ' ')}</h1>
-              <p className="text-gray-600">Manage bookings, messages, and testimonials.</p>
+              <p className="text-gray-600">Manage bookings and messages.</p>
             </div>
           </div>
 
@@ -512,17 +464,16 @@ export default function AdminDashboard() {
 
       {modalState.open && (
         <div className="fixed inset-0 z-[60] bg-black/50 flex items-end md:items-center justify-center p-0 md:p-4">
-          <div className="bg-white w-full md:max-w-2xl rounded-t-3xl md:rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white w-full max-w-none md:w-full md:max-w-2xl rounded-t-3xl md:rounded-3xl shadow-2xl max-h-[92vh] overflow-hidden">
             {modalState.loading ? (
               <div className="p-8 text-center text-gray-600">Loading...</div>
             ) : (
-              <div className="p-6 md:p-8">
+              <div className="max-h-[92vh] overflow-y-auto p-5 sm:p-6 md:p-8">
                 <div className="flex items-start justify-between gap-4 mb-6">
                   <div>
                     <h3 className="text-2xl font-bold text-gray-900">
                       {modalState.type === 'booking' && 'Booking Details'}
                       {modalState.type === 'message' && 'Contact Message'}
-                      {modalState.type === 'testimonial' && 'Testimonial'}
                     </h3>
                     <p className="text-gray-500 text-sm mt-1">Detailed view for the selected record.</p>
                   </div>
@@ -544,22 +495,26 @@ export default function AdminDashboard() {
                     <Detail label="Address" value={modalState.data.address} />
                     <Detail label="Instructions" value={modalState.data.special_instructions || 'None'} />
                     <div className="flex flex-wrap gap-3 pt-2">
-                      <button type="button" onClick={() => updateBookingStatus(modalState.data.id, 'approved')} className="btn-secondary">
-                        Approve
-                      </button>
-                      <button type="button" onClick={() => updateBookingStatus(modalState.data.id, 'completed')} className="btn-accent">
-                        Complete
-                      </button>
-                      <button type="button" onClick={() => updateBookingStatus(modalState.data.id, 'denied')} className="px-4 py-3 rounded-full bg-red-600 text-white font-semibold hover:bg-red-700">
-                        Deny
-                      </button>
+                      {!isFinalBookingStatus(modalState.data.status) && (
+                        <>
+                          <button type="button" onClick={() => updateBookingStatus(modalState.data.id, 'approved')} className="btn-secondary">
+                            Approve
+                          </button>
+                          <button type="button" onClick={() => updateBookingStatus(modalState.data.id, 'completed')} className="btn-accent">
+                            Complete
+                          </button>
+                          <button type="button" onClick={() => updateBookingStatus(modalState.data.id, 'denied')} className="px-4 py-3 rounded-full bg-red-600 text-white font-semibold hover:bg-red-700">
+                            Deny
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}
 
                 {modalState.type === 'message' && modalState.data && (
                   <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <Detail label="Name" value={modalState.data.name} />
                       <Detail label="Email" value={modalState.data.email} />
                       <Detail label="Phone" value={modalState.data.phone || 'Not provided'} />
@@ -572,18 +527,37 @@ export default function AdminDashboard() {
                   </div>
                 )}
 
-                {modalState.type === 'testimonial' && modalState.data && (
-                  <div className="space-y-4">
-                    <Detail label="Name" value={modalState.data.name} />
-                    <Detail label="Rating" value={`${modalState.data.rating}/5`} />
-                    <Detail label="Content" value={modalState.data.content} />
-                    <div className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${modalState.data.is_published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
-                      {modalState.data.is_published ? 'Published' : 'Draft'}
-                    </div>
-                  </div>
-                )}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {logoutModalOpen && (
+        <div className="fixed inset-0 z-[70] bg-black/60 flex items-center justify-center p-4">
+          <div className="w-full max-w-md rounded-3xl bg-white shadow-2xl">
+            <div className="p-6 sm:p-8">
+              <h3 className="text-2xl font-bold text-gray-900">Log out?</h3>
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                You will be signed out of the admin area and returned to the login screen.
+              </p>
+              <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => setLogoutModalOpen(false)}
+                  className="rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmLogout}
+                  className="rounded-xl bg-red-600 px-4 py-3 text-sm font-semibold text-white hover:bg-red-700"
+                >
+                  Log out
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
