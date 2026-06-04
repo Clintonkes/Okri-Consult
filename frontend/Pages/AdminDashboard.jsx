@@ -134,6 +134,12 @@ export default function AdminDashboard() {
     }
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    setSidebarOpen(false)
+    navigate('/admin')
+  }
+
   const refreshCurrentTab = async () => {
     if (activeTab === 'dashboard') {
       await loadDashboardCounts()
@@ -479,10 +485,7 @@ export default function AdminDashboard() {
             <div className="mt-auto pt-6">
               <button
                 type="button"
-                onClick={() => {
-                  localStorage.removeItem('token')
-                  navigate('/admin')
-                }}
+                onClick={handleLogout}
                 className="w-full text-left px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 font-semibold"
               >
                 Logout
