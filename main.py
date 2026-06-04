@@ -7,7 +7,8 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import logging
 from config import settings
-from database import Base, engine
+from database import Base, engine, SessionLocal
+from crud.crud import get_admin_by_email, create_admin
 from api.routes import bookings, quotes, testimonials, services, contact, auth
 
 app = FastAPI(title=settings.PROJECT_NAME)
@@ -34,6 +35,14 @@ app.include_router(contact.router, prefix=f"{settings.API_V1_STR}/contact", tags
 def startup_event():
     try:
         Base.metadata.create_all(bind=engine)
+        db = SessionLocal()
+        try:
+            admin = get_admin_by_email(db, settings.ADMIN_EMAIL)
+            if admin is None and settings.ADMIN_EMAIL and settings.ADMIN_PASSWORD:
+                create_admin(db, settings.ADMIN_EMAIL, settings.ADMIN_PASSWORD, is_superuser=True)
+                logger.info("Seeded admin account for %s", settings.ADMIN_EMAIL)
+        finally:
+            db.close()
     except Exception:
         logger.exception("Database initialization failed during startup")
 

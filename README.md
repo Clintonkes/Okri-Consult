@@ -58,6 +58,16 @@ ADMIN_EMAIL=okriconsult@proton.me
 ADMIN_PASSWORD=your-secure-password
 ```
 
+## Admin Bootstrap
+
+Create or update the admin account from your terminal:
+
+```bash
+python3 scripts/bootstrap_admin.py
+```
+
+The script will prompt for the admin email and password, hash the password, and store it in the configured database.
+
 ## Colors
 - Primary: Deep blue (#1d4ed8)
 - Secondary: Cyan/teal (#0d9488)

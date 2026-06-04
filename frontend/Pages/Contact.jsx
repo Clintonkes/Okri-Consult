@@ -33,41 +33,6 @@ export default function Contact() {
       <section className="py-20 bg-gradient-to-br from-blue-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div>
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Contact Us</h1>
-              <p className="text-gray-600 mb-8 leading-relaxed">
-                Have questions or ready to schedule? We're here to help. Reach out via form, email, or phone.
-              </p>
-              <div className="space-y-6">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                    <span className="text-blue-700 text-xl">📞</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Phone</p>
-                    <p className="text-gray-600">+1(213)909-1217</p>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mr-4">
-                    <span className="text-teal-700 text-xl">✉️</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Email</p>
-                    <p className="text-gray-600">okriconsult@proton.me</p>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
-                    <span className="text-green-700 text-xl">📍</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Location</p>
-                    <p className="text-gray-600">700 N Inglewood Ave Apt 1, Inglewood CA 90302</p>
-                  </div>
-                </div>
-              </div>
-            </div>
             <div className="card p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Send a Message</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -114,6 +79,41 @@ export default function Contact() {
                   {loading ? 'Sending...' : 'Send Message'}
                 </button>
               </form>
+            </div>
+            <div>
+              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Contact Us</h1>
+              <p className="text-gray-600 mb-8 leading-relaxed">
+                Have questions or ready to schedule? We're here to help. Reach out via form, email, or phone.
+              </p>
+              <div className="space-y-6">
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-blue-700 text-xl">📞</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">Phone</p>
+                    <p className="text-gray-600">+1(213)909-1217</p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-teal-700 text-xl">✉️</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">Email</p>
+                    <p className="text-gray-600">okriconsult@proton.me</p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-green-700 text-xl">📍</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">Location</p>
+                    <p className="text-gray-600">700 N Inglewood Ave Apt 1, Inglewood CA 90302</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
