@@ -35,10 +35,6 @@ def startup_event():
     except Exception:
         logger.exception("Database initialization failed during startup")
 
-@app.get("/")
-def root():
-    return {"message": "Welcome to Okri Consult LLC API"}
-
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
